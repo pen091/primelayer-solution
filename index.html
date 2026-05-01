@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Layer Solutions</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#020617">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
+
+body {
+  background:#0f172a;
+  color:white;
+}
+
+/* NAV */
+nav {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#020617;
+}
+
+.logo {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo img {
+  width:40px;
+  height:40px;
+  border-radius:6px;
+}
+
+/* HERO */
+.hero {
+  text-align:center;
+  padding:30px 20px;
+}
+
+/* CONTAINER */
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+/* FORM */
+.form-box {
+  background:#020617;
+  padding:20px;
+  border-radius:8px;
+  border:1px solid #1e293b;
+  margin-bottom:20px;
+}
+
+input, textarea {
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  background:#0f172a;
+  border:1px solid #334155;
+  color:white;
+}
+
+/* BUTTONS */
+button {
+  padding:10px;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  margin-right:5px;
+}
+
+.email-btn { background:#6366f1; color:white; }
+.whatsapp-btn { background:#16a34a; color:white; }
+.save-btn { background:#0ea5e9; color:white; }
+
+/* DROPDOWN */
+.dropdown {
+  position:relative;
+}
+
+.dropdown-content {
+  display:none;
+  position:absolute;
+  width:100%;
+  background:#020617;
+  border:1px solid #334155;
+  padding:10px;
+  max-height:150px;
+  overflow-y:auto;
+  z-index:10;
+}
+
+/* MEETINGS */
+.meeting {
+  background:#020617;
+  padding:15px;
+  margin-bottom:10px;
+  border:1px solid #1e293b;
+  border-radius:6px;
+}
+
+.meeting.active {
+  border:2px solid #22c55e;
+  box-shadow:0 0 10px #22c55e55;
+}
+
+.badge {
+  background:#22c55e;
+  padding:3px 6px;
+  font-size:12px;
+  border-radius:4px;
+}
+
+.actions button {
+  margin-top:8px;
+}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .container { padding:10px; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo">
+    <img src="logo.png">
+    <strong>Prime Layer</strong>
+  </div>
+</nav>
+
+<div class="hero">
+  <h2>Prime Layer Solutions</h2>
+  <p>Smart Meeting Scheduler (PWA)</p>
+</div>
+
+<div class="container">
+
+  <div class="form-box">
+
+    <h3>Schedule Meeting</h3>
+
+    <input id="title" placeholder="Meeting Title">
+
+    <label>Date</label>
+    <input id="date" type="date">
+
+    <label>Time</label>
+    <input id="time" type="time">
+
+    <!-- EMAIL SELECT -->
+    <div class="dropdown">
+      <input id="emails" placeholder="Select emails" readonly onclick="toggleDropdown()">
+
+      <div id="emailDropdown" class="dropdown-content">
+        <label><input type="checkbox" value="user1@gmail.com"> user1@gmail.com</label><br>
+        <label><input type="checkbox" value="user2@gmail.com"> user2@gmail.com</label><br>
+        <label><input type="checkbox" value="user3@gmail.com"> user3@gmail.com</label><br>
+      </div>
+    </div>
+
+    <button class="save-btn" onclick="saveMeeting()">Save Meeting</button>
+
+  </div>
+
+  <div id="meetingList"></div>
+
+</div>
+
+<script>
+
+let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
+let editIndex = null;
+
+/* NOTIFICATION */
+window.onload = () => {
+  if ("Notification" in window) {
+    Notification.requestPermission();
+  }
+};
+
+function notify(title, msg){
+  if(Notification.permission === "granted"){
+    new Notification(title,{
+      body:msg,
+      icon:"logo.png"
+    });
+  }
+}
+
+/* CALENDAR + MEET */
+function generateLinks(title,date,time){
+  let start = new Date(date+"T"+time);
+  let end = new Date(start.getTime()+3600000);
+
+  function fmt(d){
+    return d.toISOString().replace(/-|:|\.\d+/g,"");
+  }
+
+  let calendar = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent(title)
+    + "&dates=" + fmt(start)+"/"+fmt(end);
+
+  let meet = "https://meet.google.com/new";
+
+  return {calendar, meet};
+}
+
+/* SAVE */
+function saveMeeting(){
+
+  let links = generateLinks(title.value,date.value,time.value);
+
+  let meeting = {
+    title:title.value,
+    date:date.value,
+    time:time.value,
+    calendar:links.calendar,
+    meet:links.meet,
+    emails:emails.value
+  };
+
+  if(editIndex !== null){
+    meetings[editIndex]=meeting;
+    editIndex=null;
+  } else {
+    meetings.push(meeting);
+  }
+
+  localStorage.setItem("meetings",JSON.stringify(meetings));
+  notify("Meeting Saved",title.value);
+  clearForm();
+  renderMeetings();
+}
+
+/* RENDER */
+function renderMeetings(){
+
+  let now = new Date();
+  let list = document.getElementById("meetingList");
+  list.innerHTML="";
+
+  meetings.forEach((m,i)=>{
+
+    let t = new Date(m.date+"T"+m.time);
+    let active = now>=t;
+
+    list.innerHTML+=`
+      <div class="meeting ${active?'active':''}">
+        <h4>${m.title} ${active?'<span class="badge">LIVE</span>':''}</h4>
+        <p>${m.date} ${m.time}</p>
+
+        <a href="${m.calendar}" target="_blank">Calendar</a><br>
+        <a href="${m.meet}" target="_blank">Join Meet</a>
+
+        <div class="actions">
+          <button onclick="sendEmail(${i})" class="email-btn">Email</button>
+          <button onclick="sendWhatsApp()" class="whatsapp-btn">WhatsApp</button>
+          <button onclick="editMeeting(${i})">Edit</button>
+          <button onclick="deleteMeeting(${i})">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* EDIT */
+function editMeeting(i){
+  let m=meetings[i];
+  title.value=m.title;
+  date.value=m.date;
+  time.value=m.time;
+  emails.value=m.emails;
+  editIndex=i;
+}
+
+/* DELETE */
+function deleteMeeting(i){
+  meetings.splice(i,1);
+  localStorage.setItem("meetings",JSON.stringify(meetings));
+  renderMeetings();
+}
+
+/* EMAIL */
+function sendEmail(i){
+  let m=meetings[i];
+
+  let body=encodeURIComponent(
+    "Meeting:\n"+m.title+
+    "\nDate:"+m.date+
+    "\nTime:"+m.time+
+    "\nCalendar:"+m.calendar+
+    "\nMeet:"+m.meet
+  );
+
+  window.location.href=`mailto:${m.emails}?subject=Meeting&body=${body}`;
+}
+
+/* WHATSAPP */
+function sendWhatsApp(){
+  window.open("https://wa.me/?text="+
+  encodeURIComponent("CHECK YOUR GMAIL FOR DETAILS ABOUT NEXT MEETING SCHEDULE"),"_blank");
+}
+
+/* FORM */
+function clearForm(){
+  title.value="";
+  date.value="";
+  time.value="";
+  emails.value="";
+}
+
+/* DROPDOWN */
+function toggleDropdown(){
+  let d=document.getElementById("emailDropdown");
+  d.style.display=d.style.display==="block"?"none":"block";
+}
+
+document.querySelectorAll("#emailDropdown input").forEach(cb=>{
+  cb.onchange=()=>{
+    let arr=[];
+    document.querySelectorAll("#emailDropdown input:checked")
+    .forEach(c=>arr.push(c.value));
+    emails.value=arr.join(",");
+  };
+});
+
+document.addEventListener("click",(e)=>{
+  let d=document.getElementById("emailDropdown");
+  if(!d.contains(e.target)&&e.target.id!=="emails"){
+    d.style.display="none";
+  }
+});
+
+/* AUTO CHECK LIVE */
+setInterval(renderMeetings,60000);
+
+renderMeetings();
+
+</script>
+
+</body>
+</html>
