@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Primelayer Solutions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<!-- NAVBAR -->
+<nav class="bg-blue-900 p-4 text-white flex justify-between">
+  <h1 class="text-xl font-bold">Primelayer Solutions</h1>
+  <button onclick="scrollToForm()" class="bg-white text-blue-900 px-4 py-1 rounded">Schedule Meeting</button>
+</nav>
+
+<!-- HERO -->
+<section class="text-center py-20 bg-gradient-to-r from-blue-800 to-indigo-600 text-white">
+  <h2 class="text-4xl font-bold mb-4">Welcome to Primelayer Solutions</h2>
+  <p class="text-lg">Innovating Digital Systems for Modern Businesses</p>
+</section>
+
+<!-- MEETING FORM -->
+<section id="meetingForm" class="max-w-xl mx-auto bg-white p-6 mt-10 rounded shadow">
+  <h3 class="text-2xl font-bold mb-4 text-center">Schedule a Meeting</h3>
+
+  <input id="title" type="text" placeholder="Meeting Title"
+    class="w-full p-2 border mb-3 rounded">
+
+  <input id="date" type="date"
+    class="w-full p-2 border mb-3 rounded">
+
+  <input id="time" type="time"
+    class="w-full p-2 border mb-3 rounded">
+
+  <textarea id="message" placeholder="Meeting Details"
+    class="w-full p-2 border mb-3 rounded"></textarea>
+
+  <input id="emails" type="text"
+    placeholder="Enter emails (comma separated)"
+    class="w-full p-2 border mb-3 rounded">
+
+  <button onclick="sendEmail()" 
+    class="w-full bg-blue-700 text-white py-2 rounded mb-2">
+    Send Email Notification
+  </button>
+
+  <button onclick="sendWhatsApp()" 
+    class="w-full bg-green-600 text-white py-2 rounded">
+    Notify WhatsApp Group
+  </button>
+</section>
+
+<script>
+function scrollToForm() {
+  document.getElementById("meetingForm").scrollIntoView({behavior:"smooth"});
+}
+
+function sendEmail() {
+  let title = document.getElementById("title").value;
+  let date = document.getElementById("date").value;
+  let time = document.getElementById("time").value;
+  let msg = document.getElementById("message").value;
+  let emails = document.getElementById("emails").value;
+
+  let subject = encodeURIComponent("Meeting: " + title);
+  let body = encodeURIComponent(
+    "Meeting Title: " + title +
+    "\nDate: " + date +
+    "\nTime: " + time +
+    "\nDetails: " + msg +
+    "\n\nPlease check your mailbox for full details."
+  );
+
+  window.location.href = `mailto:${emails}?subject=${subject}&body=${body}`;
+}
+
+function sendWhatsApp() {
+  let title = document.getElementById("title").value;
+  let date = document.getElementById("date").value;
+  let time = document.getElementById("time").value;
+
+  let text = encodeURIComponent(
+    `Primelayer Solutions:\nNew Meeting Scheduled\n\n${title}\nDate: ${date}\nTime: ${time}\n\nCheck your email for details.`
+  );
+
+  window.open(`https://wa.me/?text=${text}`, "_blank");
+}
+</script>
+
+</body>
+</html>
+
