@@ -1,3 +1,8 @@
-self.addEventListener("install",()=>self.skipWaiting());
+self.addEventListener("install", e => self.skipWaiting());
 
-self.addEventListener("activate",()=>console.log("SW active"));
+self.addEventListener("activate", e => {});
+
+self.addEventListener("notificationclick", e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow("/"));
+});
