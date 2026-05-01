@@ -210,8 +210,7 @@ function sendEmail(index){
     "Title: " + m.title +
     "\nDate: " + m.date +
     "\nTime: " + m.time +
-    "\nDetails: " + m.message +
-    "\n\n"
+    "\nDetails: " + m.message
   );
 
   window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
