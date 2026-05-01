@@ -1,101 +1,123 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Prime Layer Solutions</title>
+
+<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
 
-<style>
-/* Animated gradient text */
-.animated-text {
-  background: linear-gradient(90deg, #00f5ff, #6366f1, #ec4899, #00f5ff);
-  background-size: 300%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: moveText 6s linear infinite;
-}
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-@keyframes moveText {
-  0% { background-position: 0% }
-  100% { background-position: 300% }
+<style>
+/* Background */
+body {
+  background: radial-gradient(circle at top, #020617, #000000);
+  color: white;
 }
 
 /* Glass effect */
 .glass {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(15px);
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Background */
-body {
-  background: radial-gradient(circle at top, #0f172a, #020617);
+/* Moving text */
+.moving-text {
+  display: inline-block;
+  animation: moveSide 4s ease-in-out infinite alternate;
+}
+
+@keyframes moveSide {
+  from { transform: translateX(-20px); }
+  to { transform: translateX(20px); }
+}
+
+/* Bold inputs */
+.input-bold {
+  background: transparent;
+  border: 2px solid #6366f1;
+  padding: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.input-bold:focus {
+  outline: none;
+  border-color: #00f5ff;
+  box-shadow: 0 0 10px #00f5ff;
+}
+
+/* Buttons */
+.btn-custom {
+  font-weight: bold;
+  padding: 12px;
+  border-radius: 8px;
 }
 </style>
 
 </head>
 
-<body class="text-white font-sans">
+<body>
 
 <!-- NAVBAR -->
-<nav class="flex justify-between items-center px-6 py-4 glass fixed w-full top-0 z-50">
-  <div class="flex items-center gap-2">
-    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center font-bold">
-      P
-    </div>
-    <h1 class="text-xl font-bold">PrimeLayer</h1>
-  </div>
-
-  <button onclick="scrollToForm()" class="bg-indigo-600 px-4 py-2 rounded hover:bg-indigo-700">
+<nav class="navbar navbar-dark bg-black px-4 shadow">
+  <span class="navbar-brand mb-0 h1 text-white fw-bold">PrimeLayer</span>
+  <button onclick="scrollToForm()" class="btn btn-primary fw-bold">
     Schedule Meeting
   </button>
 </nav>
 
 <!-- HERO -->
-<section class="h-screen flex flex-col justify-center items-center text-center px-4">
+<section class="text-center py-5">
 
-  <h1 class="text-5xl md:text-7xl font-extrabold animated-text mb-6">
+  <h1 class="display-3 fw-bold">
     Prime Layer Solutions
   </h1>
 
-  <p class="text-gray-300 max-w-xl">
-    Building smart systems, automations and digital solutions for modern teams.
+  <p class="moving-text text-info fw-bold mt-3">
+    Smart Systems • Automation • Innovation
   </p>
 
 </section>
 
 <!-- FORM -->
-<section id="meetingForm" class="max-w-xl mx-auto p-6 glass rounded-xl shadow-xl mb-20">
+<div id="meetingForm" class="container mt-5 mb-5">
+  <div class="glass p-4 rounded-4 shadow-lg">
 
-  <h2 class="text-2xl font-bold text-center mb-4">Schedule Meeting</h2>
+    <h2 class="text-center fw-bold mb-4">Schedule a Meeting</h2>
 
-  <input id="title" type="text" placeholder="Meeting Title"
-    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
+    <input id="title" type="text" placeholder="Meeting Title"
+      class="form-control input-bold mb-3">
 
-  <input id="date" type="date"
-    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
+    <input id="date" type="date"
+      class="form-control input-bold mb-3">
 
-  <input id="time" type="time"
-    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
+    <input id="time" type="time"
+      class="form-control input-bold mb-3">
 
-  <textarea id="message" placeholder="Meeting Details"
-    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600"></textarea>
+    <textarea id="message" placeholder="Meeting Details"
+      class="form-control input-bold mb-3"></textarea>
 
-  <input id="emails" type="text"
-    placeholder="Emails (comma separated)"
-    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
+    <input id="emails" type="text"
+      placeholder="Emails (comma separated)"
+      class="form-control input-bold mb-3">
 
-  <button onclick="sendEmail()" 
-    class="w-full bg-indigo-600 py-3 rounded mb-3 hover:bg-indigo-700 transition">
-    Send Email
-  </button>
+    <button onclick="sendEmail()" 
+      class="btn btn-primary w-100 btn-custom mb-3">
+      SEND EMAIL
+    </button>
 
-  <button onclick="sendWhatsApp()" 
-    class="w-full bg-green-600 py-3 rounded hover:bg-green-700 transition">
-    Notify WhatsApp
-  </button>
+    <button onclick="sendWhatsApp()" 
+      class="btn btn-success w-100 btn-custom">
+      SEND WHATSAPP
+    </button>
 
-</section>
+  </div>
+</div>
 
 <script>
 function scrollToForm() {
@@ -109,8 +131,14 @@ function sendEmail() {
   let msg = document.getElementById("message").value;
   let emails = document.getElementById("emails").value;
 
+  if(!emails){
+    alert("Enter at least one email");
+    return;
+  }
+
   let subject = encodeURIComponent("Meeting: " + title);
   let body = encodeURIComponent(
+    "Prime Layer Solutions\n\n" +
     "Meeting Title: " + title +
     "\nDate: " + date +
     "\nTime: " + time +
@@ -127,7 +155,7 @@ function sendWhatsApp() {
   let time = document.getElementById("time").value;
 
   let text = encodeURIComponent(
-    "Prime Layer Solutions:\n\n" +
+    "Prime Layer Solutions\n\n" +
     "New Meeting Scheduled\n\n" +
     title +
     "\nDate: " + date +
