@@ -34,8 +34,8 @@ nav{
 }
 
 .logo img{
-  width:40px;
-  height:40px;
+  width:250px;
+  height:100px;
   border-radius:6px;
 }
 
@@ -150,7 +150,7 @@ button{
 <input id="title" placeholder="Meeting Title">
 <input id="date" type="date">
 <input id="time" type="time">
-<textarea id="message" placeholder="Details"></textarea>
+<textarea id="message" placeholder="Paste Meeting Link Here"></textarea>
 
 <h4>Select Emails</h4>
 
@@ -160,10 +160,10 @@ button{
 
   <div id="emailDropdown" class="dropdown">
 
-    <label><input type="checkbox" value="user1@gmail.com"> user1@gmail.com</label>
-    <label><input type="checkbox" value="user2@gmail.com"> user2@gmail.com</label>
-    <label><input type="checkbox" value="user3@gmail.com"> user3@gmail.com</label>
-    <label><input type="checkbox" value="user4@gmail.com"> user4@gmail.com</label>
+    <label><input type="checkbox" value="osinachimbakamma@gmail.com"> osinachimbakamma@gmail.com</label>
+    <label><input type="checkbox" value="gabrielogbonna49@gmail.com"> gabrielogbonna49@gmail.com</label>
+    <label><input type="checkbox" value="princeekenendioziri@gmail.com"> princeekenendioziri@gmail.com</label>
+    <!-- <label><input type="checkbox" value="user4@gmail.com"> user4@gmail.com</label> -->
 
     <hr style="margin:10px 0; border:0.5px solid #334155;">
 
@@ -187,8 +187,9 @@ button{
 <script>
 
 let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
+let editIndex = null;
 
-/* TOGGLE DROPDOWN */
+/* DROPDOWN */
 function toggleDropdown(){
   let d = document.getElementById("emailDropdown");
   d.style.display = d.style.display === "block" ? "none" : "block";
@@ -222,7 +223,7 @@ function addCustomEmail(){
   updateEmails();
 }
 
-/* SAVE */
+/* SAVE OR UPDATE */
 function saveMeeting(){
 
   let meeting = {
@@ -233,11 +234,18 @@ function saveMeeting(){
     emails:emails.value
   };
 
-  meetings.push(meeting);
+  if(editIndex !== null){
+    meetings[editIndex] = meeting;
+    editIndex = null;
+  }else{
+    meetings.push(meeting);
+  }
+
   localStorage.setItem("meetings", JSON.stringify(meetings));
 
   clearForm();
   render();
+  scheduleAllReminders();
 }
 
 /* RENDER */
@@ -256,10 +264,31 @@ function render(){
         <button class="email-btn" onclick="sendEmail(${i})">Email</button>
         <button class="whatsapp-btn" onclick="sendWhatsApp()">WhatsApp</button>
         <button class="reminder-btn" onclick="setReminder(${i})">AI Reminder</button>
+        <button onclick="editMeeting(${i})">Edit</button>
         <button onclick="deleteMeeting(${i})">Delete</button>
       </div>
     `;
   });
+}
+
+/* EDIT (FIXED) */
+function editMeeting(i){
+  let m = meetings[i];
+
+  title.value = m.title;
+  date.value = m.date;
+  time.value = m.time;
+  message.value = m.message;
+  emails.value = m.emails;
+
+  editIndex = i;
+}
+
+/* DELETE */
+function deleteMeeting(i){
+  meetings.splice(i,1);
+  localStorage.setItem("meetings", JSON.stringify(meetings));
+  render();
 }
 
 /* EMAIL */
@@ -282,18 +311,10 @@ function sendEmail(i){
 /* WHATSAPP */
 function sendWhatsApp(){
   window.open(
-    "https://wa.me/?text=" + encodeURIComponent(
-      "CHECK YOUR GMAIL BOX FOR NEXT MEETING DETAILS"
-    ),
+    "https://wa.me/?text=" +
+    encodeURIComponent("CHECK YOUR GMAIL FOR NEXT MEETING DETAILS"),
     "_blank"
   );
-}
-
-/* DELETE */
-function deleteMeeting(i){
-  meetings.splice(i,1);
-  localStorage.setItem("meetings", JSON.stringify(meetings));
-  render();
 }
 
 /* CLEAR */
@@ -305,13 +326,16 @@ function clearForm(){
   emails.value="";
 }
 
-/* AI REMINDER SYSTEM */
+/* ========================= */
+/* 🔥 FIXED AI REMINDER */
+/* ========================= */
+
 function setReminder(i){
 
   let m = meetings[i];
 
-  let meetingTime = new Date(`${m.date}T${m.time}`);
-  let now = new Date();
+  let meetingTime = new Date(`${m.date}T${m.time}`).getTime();
+  let now = Date.now();
 
   let diff = meetingTime - now;
 
@@ -320,18 +344,19 @@ function setReminder(i){
     return;
   }
 
+  let reminderTime = diff - (10 * 60 * 1000);
+  if(reminderTime < 0) reminderTime = diff;
+
   setTimeout(()=>{
-
     triggerAlert(m);
-
-  }, diff - 600000); // 10 min before
+  }, reminderTime);
 }
 
 /* ALERT ENGINE */
 function triggerAlert(m){
 
   if(Notification.permission === "granted"){
-    new Notification("Meeting Reminder",{
+    new Notification("🔔 AI Reminder",{
       body:m.title + " is starting soon"
     });
   }
@@ -340,13 +365,20 @@ function triggerAlert(m){
   audio.play();
 
   if(navigator.vibrate){
-    navigator.vibrate([500,200,500]);
+    navigator.vibrate([500,200,500,200,1000]);
   }
 
-  alert("AI ALERT:\n\n" + m.title + " is starting now!");
+  alert("🤖 AI ALERT\n\n" + m.title + " is starting now!");
 }
 
-/* PERMISSION */
+/* AUTO REMINDERS ON LOAD */
+function scheduleAllReminders(){
+  meetings.forEach((m,i)=>{
+    setReminder(i);
+  });
+}
+
+/* NOTIFICATION PERMISSION */
 if("Notification" in window){
   Notification.requestPermission();
 }
@@ -361,6 +393,7 @@ document.addEventListener("click",function(e){
 
 /* INIT */
 render();
+scheduleAllReminders();
 
 </script>
 
