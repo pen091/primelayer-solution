@@ -211,7 +211,7 @@ function sendEmail(index){
     "\nDate: " + m.date +
     "\nTime: " + m.time +
     "\nDetails: " + m.message +
-    "\n\nCheck your Gmail for full details."
+    "\n\n"
   );
 
   window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
@@ -219,7 +219,7 @@ function sendEmail(index){
 
 function sendWhatsApp(){
   let text = encodeURIComponent(
-    "CHECK YOUR GMAIL FOR DETAILS ABOUT NEXT MEETING SCHEDULE"
+    "CHECK YOUR MAILBOX FOR DETAILS ABOUT NEXT MEETING SCHEDULE"
   );
 
   window.open(`https://wa.me/?text=${text}`, "_blank");
