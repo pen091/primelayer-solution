@@ -1,54 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Primelayer Solutions</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<title>Prime Layer Solutions</title>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+/* Animated gradient text */
+.animated-text {
+  background: linear-gradient(90deg, #00f5ff, #6366f1, #ec4899, #00f5ff);
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: moveText 6s linear infinite;
+}
+
+@keyframes moveText {
+  0% { background-position: 0% }
+  100% { background-position: 300% }
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Background */
+body {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+}
+</style>
+
 </head>
 
-<body class="bg-gray-100">
+<body class="text-white font-sans">
 
 <!-- NAVBAR -->
-<nav class="bg-blue-900 p-4 text-white flex justify-between">
-  <h1 class="text-xl font-bold">Primelayer Solutions</h1>
-  <button onclick="scrollToForm()" class="bg-white text-blue-900 px-4 py-1 rounded">Schedule Meeting</button>
+<nav class="flex justify-between items-center px-6 py-4 glass fixed w-full top-0 z-50">
+  <div class="flex items-center gap-2">
+    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center font-bold">
+      P
+    </div>
+    <h1 class="text-xl font-bold">PrimeLayer</h1>
+  </div>
+
+  <button onclick="scrollToForm()" class="bg-indigo-600 px-4 py-2 rounded hover:bg-indigo-700">
+    Schedule Meeting
+  </button>
 </nav>
 
 <!-- HERO -->
-<section class="text-center py-20 bg-gradient-to-r from-blue-800 to-indigo-600 text-white">
-  <h2 class="text-4xl font-bold mb-4">Welcome to Primelayer Solutions</h2>
-  <p class="text-lg">Innovating Digital Systems for Modern Businesses</p>
+<section class="h-screen flex flex-col justify-center items-center text-center px-4">
+
+  <h1 class="text-5xl md:text-7xl font-extrabold animated-text mb-6">
+    Prime Layer Solutions
+  </h1>
+
+  <p class="text-gray-300 max-w-xl">
+    Building smart systems, automations and digital solutions for modern teams.
+  </p>
+
 </section>
 
-<!-- MEETING FORM -->
-<section id="meetingForm" class="max-w-xl mx-auto bg-white p-6 mt-10 rounded shadow">
-  <h3 class="text-2xl font-bold mb-4 text-center">Schedule a Meeting</h3>
+<!-- FORM -->
+<section id="meetingForm" class="max-w-xl mx-auto p-6 glass rounded-xl shadow-xl mb-20">
+
+  <h2 class="text-2xl font-bold text-center mb-4">Schedule Meeting</h2>
 
   <input id="title" type="text" placeholder="Meeting Title"
-    class="w-full p-2 border mb-3 rounded">
+    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
 
   <input id="date" type="date"
-    class="w-full p-2 border mb-3 rounded">
+    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
 
   <input id="time" type="time"
-    class="w-full p-2 border mb-3 rounded">
+    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
 
   <textarea id="message" placeholder="Meeting Details"
-    class="w-full p-2 border mb-3 rounded"></textarea>
+    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600"></textarea>
 
   <input id="emails" type="text"
-    placeholder="Enter emails (comma separated)"
-    class="w-full p-2 border mb-3 rounded">
+    placeholder="Emails (comma separated)"
+    class="w-full p-3 mb-3 rounded bg-transparent border border-gray-600">
 
   <button onclick="sendEmail()" 
-    class="w-full bg-blue-700 text-white py-2 rounded mb-2">
-    Send Email Notification
+    class="w-full bg-indigo-600 py-3 rounded mb-3 hover:bg-indigo-700 transition">
+    Send Email
   </button>
 
   <button onclick="sendWhatsApp()" 
-    class="w-full bg-green-600 text-white py-2 rounded">
-    Notify WhatsApp Group
+    class="w-full bg-green-600 py-3 rounded hover:bg-green-700 transition">
+    Notify WhatsApp
   </button>
+
 </section>
 
 <script>
@@ -81,7 +127,12 @@ function sendWhatsApp() {
   let time = document.getElementById("time").value;
 
   let text = encodeURIComponent(
-    `Primelayer Solutions:\nNew Meeting Scheduled\n\n${title}\nDate: ${date}\nTime: ${time}\n\nCheck your email for details.`
+    "Prime Layer Solutions:\n\n" +
+    "New Meeting Scheduled\n\n" +
+    title +
+    "\nDate: " + date +
+    "\nTime: " + time +
+    "\n\nPlease check your mailbox for detail about next meeting"
   );
 
   window.open(`https://wa.me/?text=${text}`, "_blank");
@@ -90,4 +141,3 @@ function sendWhatsApp() {
 
 </body>
 </html>
-
