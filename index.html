@@ -29,8 +29,8 @@ nav {
 }
 
 .logo img {
-  width:200px;
-  height:100px;
+  width:40px;
+  height:40px;
   border-radius:6px;
 }
 
@@ -121,7 +121,7 @@ button {
 <!-- NAV -->
 <nav>
   <div class="logo">
-    <img src="IMG-20260501-WA0008.jpg">
+    <img src="logo.png">
     <strong>Prime Layer</strong>
   </div>
 </nav>
@@ -146,15 +146,16 @@ button {
     <label>Time</label>
     <input id="time" type="time">
 
-    <textarea id="message" placeholder="Paste Meeting Link here"></textarea>
+    <!-- GOOGLE CALENDAR LINK INPUT -->
+    <input id="calendarLink" placeholder="Google Calendar Link (auto generated)">
 
     <!-- EMAIL SELECTOR -->
     <div class="dropdown">
       <input id="emails" placeholder="Select emails" readonly onclick="toggleDropdown()">
 
       <div id="emailDropdown" class="dropdown-content">
-        <label><input type="checkbox" value="princeekenendioziri@gmail.com"> princeekenendioziri@gmail.com</label><br>
         <label><input type="checkbox" value="osinachimbakamma@gmail.com"> osinachimbakamma@gmail.com</label><br>
+        <label><input type="checkbox" value="princeekenendioziri@gmail.com"> princeekenendioziri@gmail.com</label><br>
         <label><input type="checkbox" value="gabrielogbonna49@gmail.com"> gabrielogbonna49@gmail.com</label><br>
         <label><input type="checkbox" value="user4@gmail.com"> user4@gmail.com</label>
       </div>
@@ -173,13 +174,37 @@ button {
 let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
 let editIndex = null;
 
+/* AUTO GENERATE GOOGLE CALENDAR LINK */
+function generateCalendarLink(title, date, time){
+
+  if(!date || !time) return "";
+
+  let start = new Date(date + "T" + time);
+  let end = new Date(start.getTime() + 60 * 60 * 1000);
+
+  function format(d){
+    return d.toISOString().replace(/-|:|\.\d\d\d/g,"");
+  }
+
+  let url = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent(title)
+    + "&dates=" + format(start) + "/" + format(end)
+    + "&details=" + encodeURIComponent("Meeting scheduled via Prime Layer Solutions");
+
+  return url;
+}
+
 /* SAVE */
 function saveMeeting(){
+
+  let link = generateCalendarLink(title.value, date.value, time.value);
+  calendarLink.value = link;
+
   let meeting = {
     title: title.value,
     date: date.value,
     time: time.value,
-    message: message.value,
+    message: link, // store calendar link instead of details text
     emails: emails.value
   };
 
@@ -205,30 +230,19 @@ function renderMeetings(){
       <div class="meeting">
         <h4>${m.title}</h4>
         <p>${m.date} - ${m.time}</p>
-        <p>${m.message}</p>
+
+        <a href="${m.message}" target="_blank" style="color:#38bdf8;">
+          Open in Google Calendar
+        </a>
 
         <div class="actions">
           <button onclick="sendEmail(${index})" class="email-btn">Email</button>
           <button onclick="sendWhatsApp()" class="whatsapp-btn">WhatsApp</button>
-          <button onclick="editMeeting(${index})">Edit</button>
           <button onclick="deleteMeeting(${index})">Delete</button>
         </div>
       </div>
     `;
   });
-}
-
-/* EDIT */
-function editMeeting(index){
-  let m = meetings[index];
-
-  title.value = m.title;
-  date.value = m.date;
-  time.value = m.time;
-  message.value = m.message;
-  emails.value = m.emails;
-
-  editIndex = index;
 }
 
 /* DELETE */
@@ -248,7 +262,7 @@ function sendEmail(index){
     "Title: " + m.title +
     "\nDate: " + m.date +
     "\nTime: " + m.time +
-    "\nMeeting Link: " + m.message
+    "\n\nOpen Calendar Event:\n" + m.message
   );
 
   window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
@@ -268,7 +282,7 @@ function clearForm(){
   title.value = "";
   date.value = "";
   time.value = "";
-  message.value = "";
+  calendarLink.value = "";
   emails.value = "";
 }
 
@@ -278,7 +292,7 @@ function toggleDropdown(){
   d.style.display = d.style.display === "block" ? "none" : "block";
 }
 
-/* UPDATE EMAIL FIELD */
+/* EMAIL SELECT */
 document.querySelectorAll("#emailDropdown input").forEach(cb => {
   cb.addEventListener("change", updateEmails);
 });
@@ -291,7 +305,7 @@ function updateEmails(){
   document.getElementById("emails").value = selected.join(",");
 }
 
-/* CLOSE DROPDOWN OUTSIDE */
+/* CLOSE DROPDOWN */
 document.addEventListener("click", function(e){
   let dropdown = document.getElementById("emailDropdown");
   let input = document.getElementById("emails");
@@ -301,7 +315,6 @@ document.addEventListener("click", function(e){
   }
 });
 
-/* INIT */
 renderMeetings();
 
 </script>
