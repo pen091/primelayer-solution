@@ -77,6 +77,23 @@ button {
 .whatsapp-btn { background:#16a34a; color:white; }
 .save-btn { background:#0ea5e9; color:white; }
 
+/* DROPDOWN */
+.dropdown {
+  position:relative;
+}
+
+.dropdown-content {
+  display:none;
+  position:absolute;
+  width:100%;
+  background:#020617;
+  border:1px solid #334155;
+  padding:10px;
+  max-height:150px;
+  overflow-y:auto;
+  z-index:10;
+}
+
 /* MEETING LIST */
 .meeting {
   background:#020617;
@@ -122,10 +139,26 @@ button {
     <h3>Schedule Meeting</h3>
 
     <input id="title" placeholder="Meeting Title">
+
+    <label>Date</label>
     <input id="date" type="date">
+
+    <label>Time</label>
     <input id="time" type="time">
+
     <textarea id="message" placeholder="Details"></textarea>
-    <input id="emails" placeholder="Emails (comma separated)">
+
+    <!-- EMAIL SELECTOR -->
+    <div class="dropdown">
+      <input id="emails" placeholder="Select emails" readonly onclick="toggleDropdown()">
+
+      <div id="emailDropdown" class="dropdown-content">
+        <label><input type="checkbox" value="princeekenendioziri@gmail.com"> user1@gmail.com</label><br>
+        <label><input type="checkbox" value="user2@gmail.com"> user2@gmail.com</label><br>
+        <label><input type="checkbox" value="user3@gmail.com"> user3@gmail.com</label><br>
+        <label><input type="checkbox" value="user4@gmail.com"> user4@gmail.com</label>
+      </div>
+    </div>
 
     <button class="save-btn" onclick="saveMeeting()">Save Meeting</button>
   </div>
@@ -140,6 +173,7 @@ button {
 let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
 let editIndex = null;
 
+/* SAVE */
 function saveMeeting(){
   let meeting = {
     title: title.value,
@@ -161,6 +195,7 @@ function saveMeeting(){
   renderMeetings();
 }
 
+/* RENDER */
 function renderMeetings(){
   let list = document.getElementById("meetingList");
   list.innerHTML = "";
@@ -183,6 +218,7 @@ function renderMeetings(){
   });
 }
 
+/* EDIT */
 function editMeeting(index){
   let m = meetings[index];
 
@@ -195,12 +231,14 @@ function editMeeting(index){
   editIndex = index;
 }
 
+/* DELETE */
 function deleteMeeting(index){
   meetings.splice(index,1);
   localStorage.setItem("meetings", JSON.stringify(meetings));
   renderMeetings();
 }
 
+/* EMAIL */
 function sendEmail(index){
   let m = meetings[index];
 
@@ -216,14 +254,16 @@ function sendEmail(index){
   window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
 }
 
+/* WHATSAPP */
 function sendWhatsApp(){
   let text = encodeURIComponent(
-    "CHECK YOUR MAILBOX FOR DETAILS ABOUT NEXT MEETING SCHEDULE"
+    "CHECK YOUR GMAIL FOR DETAILS ABOUT NEXT MEETING SCHEDULE"
   );
 
   window.open(`https://wa.me/?text=${text}`, "_blank");
 }
 
+/* CLEAR */
 function clearForm(){
   title.value = "";
   date.value = "";
@@ -232,6 +272,36 @@ function clearForm(){
   emails.value = "";
 }
 
+/* DROPDOWN */
+function toggleDropdown(){
+  let d = document.getElementById("emailDropdown");
+  d.style.display = d.style.display === "block" ? "none" : "block";
+}
+
+/* UPDATE EMAIL FIELD */
+document.querySelectorAll("#emailDropdown input").forEach(cb => {
+  cb.addEventListener("change", updateEmails);
+});
+
+function updateEmails(){
+  let selected = [];
+  document.querySelectorAll("#emailDropdown input:checked")
+    .forEach(cb => selected.push(cb.value));
+
+  document.getElementById("emails").value = selected.join(",");
+}
+
+/* CLOSE DROPDOWN OUTSIDE */
+document.addEventListener("click", function(e){
+  let dropdown = document.getElementById("emailDropdown");
+  let input = document.getElementById("emails");
+
+  if(!dropdown.contains(e.target) && e.target !== input){
+    dropdown.style.display = "none";
+  }
+});
+
+/* INIT */
 renderMeetings();
 
 </script>
