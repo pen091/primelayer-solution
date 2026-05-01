@@ -29,8 +29,8 @@ nav {
 }
 
 .logo img {
-  width:100px;
-  height:60px;
+  width:200px;
+  height:100px;
   border-radius:6px;
 }
 
@@ -248,7 +248,7 @@ function sendEmail(index){
     "Title: " + m.title +
     "\nDate: " + m.date +
     "\nTime: " + m.time +
-    "\nDetails: " + m.message
+    "\nMeeting Link: " + m.message
   );
 
   window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
