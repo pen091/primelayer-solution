@@ -6,227 +6,234 @@
 <title>Prime Layer Solutions</title>
 
 <style>
+* { margin:0; padding:0; box-sizing:border-box; font-family:Arial; }
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-}
-
-/* BODY */
 body {
-  background: radial-gradient(circle at top, #020617, #000);
-  color: white;
+  background:#0f172a;
+  color:white;
 }
 
-/* NAVBAR */
+/* NAV */
 nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(10px);
-  position: sticky;
-  top: 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 20px;
+  background:#020617;
 }
 
 .logo {
-  font-size: 22px;
-  font-weight: bold;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
-.nav-btn {
-  background: #4f46e5;
-  border: none;
-  padding: 10px 15px;
-  color: white;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
+.logo img {
+  width:40px;
+  height:40px;
+  border-radius:6px;
 }
 
 /* HERO */
 .hero {
-  text-align: center;
-  padding: 80px 20px;
+  text-align:center;
+  padding:40px 20px;
 }
 
-.hero h1 {
-  font-size: 48px;
-  font-weight: bold;
-}
-
-.hero p {
-  margin-top: 15px;
-  color: #aaa;
-}
-
-/* MOVING TEXT */
-.moving-text {
-  display: inline-block;
-  color: #00f5ff;
-  font-weight: bold;
-  margin-top: 15px;
-  animation: move 3s infinite alternate ease-in-out;
-}
-
-@keyframes move {
-  from { transform: translateX(-20px); }
-  to { transform: translateX(20px); }
+/* CONTAINER */
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
 }
 
 /* FORM */
-.container {
-  max-width: 500px;
-  margin: 40px auto;
-  padding: 20px;
-}
-
 .form-box {
-  background: rgba(255,255,255,0.05);
-  padding: 25px;
-  border-radius: 12px;
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255,255,255,0.1);
+  background:#020617;
+  padding:20px;
+  border-radius:8px;
+  border:1px solid #1e293b;
+  margin-bottom:20px;
 }
 
-/* INPUTS */
 input, textarea {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 2px solid #4f46e5;
-  border-radius: 6px;
-  background: transparent;
-  color: white;
-  font-weight: bold;
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  background:#0f172a;
+  border:1px solid #334155;
+  color:white;
 }
 
-input:focus, textarea:focus {
-  outline: none;
-  border-color: #00f5ff;
-  box-shadow: 0 0 8px #00f5ff;
-}
-
-/* BUTTONS */
 button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border: none;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
+  padding:10px;
+  border:none;
+  cursor:pointer;
+  font-weight:bold;
+  margin-right:5px;
 }
 
-.email-btn {
-  background: #4f46e5;
-  color: white;
+.email-btn { background:#6366f1; color:white; }
+.whatsapp-btn { background:#16a34a; color:white; }
+.save-btn { background:#0ea5e9; color:white; }
+
+/* MEETING LIST */
+.meeting {
+  background:#020617;
+  padding:15px;
+  margin-bottom:10px;
+  border:1px solid #1e293b;
+  border-radius:6px;
 }
 
-.whatsapp-btn {
-  background: #16a34a;
-  color: white;
+.meeting h4 { margin-bottom:5px; }
+
+.actions button {
+  margin-top:8px;
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .container {
-    padding: 10px;
-  }
+@media(max-width:600px){
+  .container { padding:10px; }
 }
-
 </style>
-
 </head>
 
 <body>
 
 <!-- NAV -->
 <nav>
-  <div class="logo">Prime Layer</div>
-  <button class="nav-btn" onclick="scrollToForm()">Schedule</button>
+  <div class="logo">
+    <img src="logo.png">
+    <strong>Prime Layer</strong>
+  </div>
 </nav>
 
 <!-- HERO -->
-<section class="hero">
-  <h1>Prime Layer Solutions</h1>
-  <div class="moving-text">Automation • Innovation • Smart Systems</div>
-  <p>Building modern digital tools for smart businesses.</p>
-</section>
+<div class="hero">
+  <h2>Prime Layer Solutions</h2>
+  <p>Meeting Scheduler System</p>
+</div>
 
 <!-- FORM -->
-<div class="container" id="meetingForm">
+<div class="container">
+
   <div class="form-box">
+    <h3>Schedule Meeting</h3>
 
-    <h2 style="text-align:center;margin-bottom:15px;">Schedule Meeting</h2>
-
-    <input id="title" type="text" placeholder="Meeting Title">
+    <input id="title" placeholder="Meeting Title">
     <input id="date" type="date">
     <input id="time" type="time">
-    <textarea id="message" placeholder="Meeting Details"></textarea>
-    <input id="emails" type="text" placeholder="Emails (comma separated)">
+    <textarea id="message" placeholder="Details"></textarea>
+    <input id="emails" placeholder="Emails (comma separated)">
 
-    <button class="email-btn" onclick="sendEmail()">SEND EMAIL</button>
-    <button class="whatsapp-btn" onclick="sendWhatsApp()">SEND WHATSAPP</button>
-
+    <button class="save-btn" onclick="saveMeeting()">Save Meeting</button>
   </div>
+
+  <!-- LIST -->
+  <div id="meetingList"></div>
+
 </div>
 
 <script>
 
-function scrollToForm() {
-  document.getElementById("meetingForm").scrollIntoView({behavior:"smooth"});
-}
+let meetings = JSON.parse(localStorage.getItem("meetings")) || [];
+let editIndex = null;
 
-function sendEmail() {
-  let title = document.getElementById("title").value;
-  let date = document.getElementById("date").value;
-  let time = document.getElementById("time").value;
-  let msg = document.getElementById("message").value;
-  let emails = document.getElementById("emails").value;
+function saveMeeting(){
+  let meeting = {
+    title: title.value,
+    date: date.value,
+    time: time.value,
+    message: message.value,
+    emails: emails.value
+  };
 
-  if (!emails) {
-    alert("Please enter email(s)");
-    return;
+  if(editIndex !== null){
+    meetings[editIndex] = meeting;
+    editIndex = null;
+  } else {
+    meetings.push(meeting);
   }
 
-  let subject = encodeURIComponent("Meeting: " + title);
-  let body = encodeURIComponent(
-    "Prime Layer Solutions\n\n" +
-    "Meeting Title: " + title +
-    "\nDate: " + date +
-    "\nTime: " + time +
-    "\nDetails: " + msg +
-    "\n\nPlease check your mailbox for full details."
-  );
-
-  window.location.href = `mailto:${emails}?subject=${subject}&body=${body}`;
+  localStorage.setItem("meetings", JSON.stringify(meetings));
+  clearForm();
+  renderMeetings();
 }
 
-function sendWhatsApp() {
-  let title = document.getElementById("title").value;
-  let date = document.getElementById("date").value;
-  let time = document.getElementById("time").value;
+function renderMeetings(){
+  let list = document.getElementById("meetingList");
+  list.innerHTML = "";
 
-  let text = encodeURIComponent(
+  meetings.forEach((m, index) => {
+    list.innerHTML += `
+      <div class="meeting">
+        <h4>${m.title}</h4>
+        <p>${m.date} - ${m.time}</p>
+        <p>${m.message}</p>
+
+        <div class="actions">
+          <button onclick="sendEmail(${index})" class="email-btn">Email</button>
+          <button onclick="sendWhatsApp()" class="whatsapp-btn">WhatsApp</button>
+          <button onclick="editMeeting(${index})">Edit</button>
+          <button onclick="deleteMeeting(${index})">Delete</button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function editMeeting(index){
+  let m = meetings[index];
+
+  title.value = m.title;
+  date.value = m.date;
+  time.value = m.time;
+  message.value = m.message;
+  emails.value = m.emails;
+
+  editIndex = index;
+}
+
+function deleteMeeting(index){
+  meetings.splice(index,1);
+  localStorage.setItem("meetings", JSON.stringify(meetings));
+  renderMeetings();
+}
+
+function sendEmail(index){
+  let m = meetings[index];
+
+  let subject = encodeURIComponent("Meeting: " + m.title);
+  let body = encodeURIComponent(
     "Prime Layer Solutions\n\n" +
-    "New Meeting Scheduled\n\n" +
-    title +
-    "\nDate: " + date +
-    "\nTime: " + time +
-    "\n\nPlease check your mailbox for detail about next meeting"
+    "Title: " + m.title +
+    "\nDate: " + m.date +
+    "\nTime: " + m.time +
+    "\nDetails: " + m.message +
+    "\n\nCheck your Gmail for full details."
+  );
+
+  window.location.href = `mailto:${m.emails}?subject=${subject}&body=${body}`;
+}
+
+function sendWhatsApp(){
+  let text = encodeURIComponent(
+    "CHECK YOUR GMAIL FOR DETAILS ABOUT NEXT MEETING SCHEDULE"
   );
 
   window.open(`https://wa.me/?text=${text}`, "_blank");
 }
+
+function clearForm(){
+  title.value = "";
+  date.value = "";
+  time.value = "";
+  message.value = "";
+  emails.value = "";
+}
+
+renderMeetings();
 
 </script>
 
